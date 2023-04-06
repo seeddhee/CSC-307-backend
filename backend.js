@@ -72,6 +72,12 @@ app.post('/users', (req, res) => {
     res.status(200).end();
 });
 
+app.delete('/users', (req, res) => {
+    const id = req.body
+    let result = findUserById(id);
+    deleteUser(result);
+    res.status(200).end();
+});
 
 const findUserByName = (name) => { 
     return users['users_list'].filter( (user) => user['name'] === name); 
@@ -85,6 +91,11 @@ function findUserById(id) {
 
 function addUser(user){
     users['users_list'].push(user);
+}
+
+function deleteUser(user){
+    const x = users['users_list'].splice(1, 1);
+    users['users_list'].remove(x, user);
 }
 
 app.listen(port, () => {
