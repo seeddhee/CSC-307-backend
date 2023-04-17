@@ -70,15 +70,18 @@ app.get('/users/:id', (req, res) => {
 
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
-    addUser(userToAdd);
-    res.status(200).end();
+
+    const updateduser = updateUserWithID(userToAdd)
+    addUser(updateduser);
+     res.status(201).send(updateduser).end();
+
 });
 
-app.delete('/users', (req, res) => {
-    const id = req.body
+app.delete('/users/:id', (req, res) => {
+    const id = req.params.id;
     let result = findUserById(id);
     deleteUser(result);
-    res.status(200).end();
+    res.status(204).end();
 });
 
 const findUserByName = (name) => { 
@@ -90,15 +93,25 @@ function findUserById(id) {
     //return users['users_list'].filter( (user) => user['id'] === id);
 }
 
+function generateID(){
+    return Math.floor(Math.random() * 10)}
 
-function addUser(user){
-    users['users_list'].push(user);
+function updateUserWithID(user){
+   user['id'] = generateID();
+    return user
 }
+    
+function addUser(user){
+users['users_list'].push(user);
+}
+
 
 function deleteUser(user){
-    const x = users['users_list'].splice(1, 1);
-    users['users_list'].remove(x, user);
-}
+    const index = users['users_list'].findIndex((u) => u.id === user.id);
+    if (index !== -1) {
+      users['users_list'].splice(index, 1);
+    }
+  }
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
